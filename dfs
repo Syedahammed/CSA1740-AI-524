@@ -1,0 +1,22 @@
+def dfs(graph, vertex):
+    visited = set()
+    dfs_helper(graph, vertex, visited)
+    print()
+
+def dfs_helper(graph, vertex, visited):
+    visited.add(vertex)
+    print(vertex, end=" ")
+    for neighbour in graph[vertex]:
+        if neighbour not in visited:
+            dfs_helper(graph, neighbour, visited)
+
+graph = {
+  'A' : ['B','C'],
+  'B' : ['D', 'E'],
+  'C' : ['F'],
+  'D' : [],
+  'E' : ['F'],
+  'F' : []
+}
+
+dfs(graph, 'A')  # Output: A B D E F C
