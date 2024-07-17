@@ -1,0 +1,12 @@
+def vacuum_cleaner(state):
+    if state == 'ccc':
+        return 'Clean'
+    else:
+        state = state.replace('d', 'c', 1)
+        return vacuum_cleaner(state)
+
+print(vacuum_cleaner('ddd'))
+print(vacuum_cleaner('dcc'))
+print(vacuum_cleaner('cdc'))
+print(vacuum_cleaner('ccd'))
+print(vacuum_cleaner('ccc'))
