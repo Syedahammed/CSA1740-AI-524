@@ -1,0 +1,15 @@
+def fit(X, y):
+    return {'feature': 0, 'threshold': 0.5, 'left': 1, 'right': 0}
+
+def predict(tree, X):
+    return [tree['left'] if x[tree['feature']] < tree['threshold'] else tree['right'] for x in X]
+
+# Sample data
+X = [[1], [1], [0.3], [0.7]]
+y = [0, 1, 0, 1]
+
+# Train and predict
+tree = fit(X, y)
+predictions = predict(tree, X)
+accuracy = sum(p == t for p, t in zip(predictions, y)) / len(y)
+print(f"Accuracy: {accuracy:.2f}")

@@ -1,0 +1,40 @@
+def map_coloring():
+    states = ["WA", "NT", "Q", "NSW", "V", "SA", "T"]
+    colours = ["R", "G", "B"]
+    adjacencies = {
+        "WA": ["NT", "SA"],
+        "NT": ["WA", "SA", "Q"],
+        "SA": ["WA", "NT", "Q", "NSW", "V"],
+        "Q": ["NT", "SA", "NSW"],
+        "NSW": ["SA", "Q", "V"],
+        "V": ["SA", "NSW"],
+        "T": []
+    }
+
+    def is_valid(state, colour, assignment):
+        for adjacent_state in adjacencies[state]:
+            if adjacent_state in assignment and assignment[adjacent_state] == colour:
+                return False
+        return True
+
+    def solve(assignment={}):
+        if len(assignment) == len(states):
+            return assignment
+        for state in states:
+            if state not in assignment:
+                for colour in colours:
+                    if is_valid(state, colour, assignment):
+                        assignment[state] = colour
+                        solution = solve(assignment)
+                        if solution:
+                            return solution
+                        del assignment[state]
+                return None
+
+    solution = solve()
+    if solution:
+        return solution
+    else:
+        return "No solution found"
+
+print(map_coloring())

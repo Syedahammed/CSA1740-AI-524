@@ -1,0 +1,60 @@
+import math
+import random
+
+# Activation function and its derivative
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Initialize weights and biases
+random.seed(42)
+input_size, hidden_size, output_size = 2, 2, 1
+W1 = [[random.random() for _ in range(hidden_size)] for _ in range(input_size)]
+b1 = [random.random() for _ in range(hidden_size)]
+W2 = [[random.random() for _ in range(output_size)] for _ in range(hidden_size)]
+b2 = [random.random() for _ in range(output_size)]
+
+# Matrix-vector multiplication
+def dot_product(matrix, vector):
+    return [sum(m * v for m, v in zip(row, vector)) for row in matrix]
+
+# Train the network
+def train(X, y, epochs=10000, lr=0.1):
+    global W1, b1, W2, b2
+    for _ in range(epochs):
+        for x, target in zip(X, y):
+            # Forward
+            H = [sigmoid(sum(w * xi + bi for w, xi, bi in zip(weights, x, b1))) for weights in zip(*W1)]
+            O = [sigmoid(sum(w * hi + bi for w, hi, bi in zip(weights, H, b2))) for weights in zip(*W2)]
+            # Backward
+            O_error = [target_i - output_i for target_i, output_i in zip(target, O)]
+            O_delta = [error * sigmoid_derivative(output) for error, output in zip(O_error, O)]
+            H_error = [sum(w * delta for w, delta in zip(weights, O_delta)) for weights in zip(*W2)]
+            H_delta = [error * sigmoid_derivative(h) for error, h in zip(H_error, H)]
+            # Update weights and biases
+            for i, h in enumerate(H):
+                for j, delta in enumerate(O_delta):
+                    W2[i][j] += h * delta * lr
+                b2[i] += O_delta[i] * lr
+            for i, x_i in enumerate(x):
+                for j, delta in enumerate(H_delta):
+                    W1[i][j] += x_i * delta * lr
+                b1[i] += H_delta[i] * lr
+
+# Sample data
+X = [[0, 0], [0, 1], [1, 0], [1, 1]]
+y = [[0], [1], [1], [0]]
+
+# Train the network
+train(X, y)
+
+# Predict
+def predict(X):
+    H = [sigmoid(sum(w * xi + bi for w, xi, bi in zip(weights, X, b1))) for weights in zip(*W1)]
+    return [sigmoid(sum(w * hi + bi for w, hi, bi in zip(weights, H, b2))) for weights in zip(*W2)]
+
+# Test predictions
+for x in X:
+    print(f"Input: {x}, Predicted: {predict(x)}")

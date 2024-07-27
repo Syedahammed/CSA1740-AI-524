@@ -1,0 +1,23 @@
+import heapq
+def a_star(start, goal, graph, heuristic):
+    queue = [(0, start)]
+    cost_so_far = {start: 0}
+    while queue:
+        _, current = heapq.heappop(queue)
+        if current == goal:
+            return cost_so_far[current]
+        for neighbor, cost in graph[current].items():
+            new_cost = cost_so_far[current] + cost
+            if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                cost_so_far[neighbor] = new_cost
+                heapq.heappush(queue, (new_cost + heuristic(neighbor, goal), neighbor))
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1}
+}
+
+heuristic = lambda node, goal: 0 if node == goal else 1
+print(a_star('A', 'D', graph, heuristic))  # Output: 4

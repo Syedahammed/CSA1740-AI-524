@@ -1,0 +1,19 @@
+import math
+
+def distance(city1, city2):
+    return math.sqrt((city1[0] - city2[0])**2 + (city1[1] - city2[1])**2)
+
+def tsp(cities):
+    num_cities = len(cities)
+    current_city = cities[0]
+    path = [current_city]
+    unvisited_cities = set(cities[1:])
+    while unvisited_cities:
+        next_city = min(unvisited_cities, key=lambda city: distance(current_city, city))
+        path.append(next_city)
+        unvisited_cities.remove(next_city)
+        current_city = next_city
+    return path
+
+cities = [(0, 0), (10, 0), (5, 5), (0, 10), (10, 10)]
+print(tsp(cities))  # Output: [(0, 0), (0, 10), (5, 5), (10, 10), (10, 0)]

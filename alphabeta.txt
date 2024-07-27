@@ -1,0 +1,90 @@
+import random
+
+def print_board(board):
+    print(" " + board[0] + " | " + board[1] + " | " + board[2])
+    print("---+---+---")
+    print(" " + board[3] + " | " + board[4] + " | " + board[5])
+    print("---+---+---")
+    print(" " + board[6] + " | " + board[7] + " | " + board[8])
+
+def check_win(board):
+    win_conditions = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]
+    for condition in win_conditions:
+        if board[condition[0]] == board[condition[1]] == board[condition[2]] != " ":
+            return board[condition[0]]
+    if " " not in board:
+        return "Tie"
+    return False
+
+def alpha_beta(board, depth, alpha, beta, is_maximizing):
+    result = check_win(board)
+    if result:
+        if result == "X":
+            return -10 + depth
+        elif result == "O":
+            return 10 - depth
+        else:
+            return 0
+    if is_maximizing:
+        best_score = -float('inf')
+        for i in range(9):
+            if board[i] == " ":
+                board[i] = "O"
+                score = alpha_beta(board, depth + 1, alpha, beta, False)
+                board[i] = " "
+                best_score = max(score, best_score)
+                alpha = max(alpha, best_score)
+                if beta <= alpha:
+                    break
+        return best_score
+    else:
+        best_score = float('inf')
+        for i in range(9):
+            if board[i] == " ":
+                board[i] = "X"
+                score = alpha_beta(board, depth + 1, alpha, beta, True)
+                board[i] = " "
+                best_score = min(score, best_score)
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                    break
+        return best_score
+
+def ai_move(board):
+    best_score = -float('inf')
+    best_move = 0
+    alpha = -float('inf')
+    beta = float('inf')
+    for i in range(9):
+        if board[i] == " ":
+            board[i] = "O"
+            score = alpha_beta(board, 0, alpha, beta, False)
+            board[i] = " "
+            if score > best_score:
+                best_score = score
+                best_move = i
+            alpha = max(alpha, best_score)
+    return best_move
+
+def game():
+    board = [" "] * 9
+    current_player = "X"
+    while True:
+        print_board(board)
+        if current_player == "X":
+            move = int(input("Enter your move (1-9): ")) - 1
+            board[move] = "X"
+        else:
+            move = ai_move(board)
+            board[move] = "O"
+        result = check_win(board)
+        if result:
+            print_board(board)
+            if result == "Tie":
+                print("It's a tie!")
+            else:
+                print("Player " + result + " wins!")
+            break
+        current_player = "O" if current_player == "X" else "X"
+
+game()
